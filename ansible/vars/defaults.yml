@@ -1,7 +1,7 @@
 locale: en_US.UTF-8
-timezone: Canada/Eastern
+timezone: Europe/Berlin
 ssh_key_file: ~/.ssh/id_rsa.pub
-sysadmin: postmaster@example.com
+sysadmin: ${postmaster}
 open_ports: 22
 
 vmail_user: vmail
@@ -9,4 +9,9 @@ vmail_uid: 150
 vmail_group: mail
 vmail_gid: 8
 vmail_dir: /var/vmail
-db_backend: sqlite
+
+db_backend: mysql
+db_host: host
+db_name: name
+db_user: user
+db_pass: pass

@@ -8,6 +8,8 @@
   with_items:
     - main.cf
     - master.cf
-    - ${db_backend}/sql-virtual-alias-maps.cf
-    - ${db_backend}/sql-virtual-domains-maps.cf
-    - ${db_backend}/sql-virtual-mailbox-maps.cf
+    - ${db_backend}/mysql-sender-login-maps.cf
+    - ${db_backend}/mysql-virtual-alias-maps.cf
+    - ${db_backend}/mysql-virtual-mailbox-limit-maps.cf
+    - ${db_backend}/mysql-virtual-domains-maps.cf
+    - ${db_backend}/mysql-virtual-mailbox-maps.cf

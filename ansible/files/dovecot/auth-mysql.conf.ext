@@ -1,0 +1,12 @@
+# Look up user passwords from a MySQL database as
+# defined in /etc/dovecot/dovecot-sql.conf.ext
+passdb {
+  driver = mysql
+  args = /etc/dovecot/dovecot-mysql.conf.ext
+}
+# Look up user information from a MySQL database as
+# defined in /etc/dovecot/dovecot-sql.conf.ext
+userdb {
+  driver = mysql
+  args = /etc/dovecot/dovecot-mysql.conf.ext
+}

@@ -9,6 +9,7 @@
     - include: tasks/users.yml
     - include: tasks/dovecot.yml
     - include: tasks/postfix.yml
+    - include: tasks/spamassassin.yml
     - include: tasks/vimbadmin.yml
     - include: tasks/startup.yml
   handlers:

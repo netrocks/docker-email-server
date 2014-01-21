@@ -58,18 +58,6 @@
   tags:
     - vimbadmin
 
-- name: Initialize ViMbAdmin database
-  command: /usr/local/vimbadmin/bin/doctrine-cli.php create-tables
-           creates=${vmail_dir}/authdb.sqlite
-  tags:
-    - vimbadmin
-
-- name: Set permissions on ViMbAdmin database
-  file: name=${vmail_dir}/authdb.sqlite
-        owner=${vmail_user} group=${vmail_group} mode=660 state=file
-  tags:
-    - vimbadmin
-
 - name: Configure nginx for ViMbAdmin
   template: src=templates/nginx-vimbadmin dest=/etc/nginx/sites-enabled/vimbadmin
   tags:

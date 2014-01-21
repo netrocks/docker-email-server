@@ -6,14 +6,6 @@ if [ "_$RANDOMIZE_PASSWORD" = "_1" ]; then
     echo "root:$ROOT_PASSWORD" | chpasswd
 fi
 
-if [ ! -f $VMAIL_DIR/authdb.sqlite ]; then
-    chown $VMAIL_USER:$VMAIL_GROUP $VMAIL_DIR
-    chmod 770 $VMAIL_DIR
-    /usr/local/vimbadmin/bin/doctrine-cli.php create-tables
-    chown $VMAIL_USER:$VMAIL_GROUP $VMAIL_DIR/authdb.sqlite
-    chmod 660 $VMAIL_DIR/authdb.sqlite
-fi
-
 if [ ! -f /var/lib/clamav/main.cvd ]; then
     chown clamav:clamav /var/lib/clamav
     chmod 770 /var/lib/clamav

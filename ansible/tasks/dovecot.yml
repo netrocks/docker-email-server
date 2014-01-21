@@ -1,32 +1,32 @@
 - name: Install dovecot configuration files
   copy: src=dovecot/${item} dest=/etc/dovecot/conf.d
   with_items:
-    - auth-sql.conf.ext
+    - auth-mysql.conf.ext
 
 - name: Install dovecot configuration templates
   template: src=dovecot/${item} dest=/etc/dovecot/conf.d
   with_items:
     - 11-master.conf
 
-- name: Set dovecot driver for SQL auth to sqlite
+- name: Set dovecot driver for MySQL auth to mysql
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='driver\s*='
-              line='driver = sqlite' state=present
+              line='driver = mysql' state=present
 
-- name: Set dovecot connection args for SQL auth DB
+- name: Set dovecot connection args for MySQL auth DB
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='connect\s*='
-              line='connect = ${vmail_dir}/authdb.sqlite' state=present
+              line='connect = host=${db_host} dbname=${db_name} user=${db_user} password=${db_pass}' state=present
 
-- name: Set dovecot SQL auth password scheme
+- name: Set dovecot MySQL auth password scheme
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='default_pass_scheme\s*='
-              line='default_pass_scheme = MD5-CRYPT' state=present
+              line='default_pass_scheme = PLAIN-MD5' state=present
 
-- name: Configure dovecot SQL queries
-  template: src=templates/dovecot/dovecot-sqlite.conf.ext
-            dest=/etc/dovecot/dovecot-sqlite.conf.ext
+- name: Configure dovecot MySQL queries
+  template: src=templates/dovecot/dovecot-mysql.conf.ext
+            dest=/etc/dovecot/dovecot-mysql.conf.ext
 
-- name: Wire in configuration for dovecot SQL queries
-  lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='dovecot-sqlite'
-              line='!include dovecot-sqlite.conf.ext' state=present
+- name: Wire in configuration for dovecot MySQL queries
+  lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='dovecot-mysql'
+              line='!include dovecot-mysql.conf.ext' state=present
 
 - name: Disable dovecot plain text auth
   lineinfile: dest=/etc/dovecot/conf.d/10-auth.conf regexp='disable_plaintext_auth\s*='
@@ -41,7 +41,7 @@
               line='#\1' backrefs=yes state=present
 
 - name: Activate dovecot SQL auth
-  lineinfile: dest=/etc/dovecot/conf.d/10-auth.conf regexp='^#(.* auth-sql\..*)$'
+  lineinfile: dest=/etc/dovecot/conf.d/10-auth.conf regexp='^#(.* auth-mysql\..*)$'
               line='\1' backrefs=yes state=present
 
 - name: Set dovecot mail location
