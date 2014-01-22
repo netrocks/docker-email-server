@@ -17,17 +17,14 @@ RUN apt-get install -y --no-install-recommends \
     && apt-get clean \
     && pip install ansible
 
-ENV RANDOMIZE_PASSWORD 0
-ENV MAILNAME mailserver.local
-ENV MYHOSTNAME mailserver.local
-ENV HOSTNAME mailserver.local
-ENV VIMBADMIN_HOSTNAME mailserver.local
+ENV RANDOMIZE_PASSWORD 1
+ENV HOSTNAME mail.localhost
 ENV VMAIL_USER vmail
 ENV VMAIL_UID 150
 ENV VMAIL_GROUP mail
 ENV VMAIL_GID 8
 ENV VMAIL_DIR /var/vmail
-ENV VIMBADMIN_SALT 1cZmKuY02hlQ7TXcrgWL
+ENV VIMBADMIN_SALT 123
 ENV VIMBADMIN_VER 2.2.2
 
 # Upstart doesn't work inside a docker container, so we deactivate it to work

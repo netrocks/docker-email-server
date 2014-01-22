@@ -1,5 +1,0 @@
-hosts    = ${db_host}
-user     = ${db_user}
-password = ${db_pass}
-dbname   = ${db_name}
-query    = SELECT maildir FROM mailbox WHERE username='%s' AND active = '1'

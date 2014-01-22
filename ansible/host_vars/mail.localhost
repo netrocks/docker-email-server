@@ -1,0 +1,5 @@
+db_backend: mysql
+db_host: xxx
+db_name: xxx
+db_user: xxx
+db_pass: xxx

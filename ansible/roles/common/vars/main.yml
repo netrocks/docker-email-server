@@ -1,0 +1,5 @@
+locale: en_US.UTF-8
+timezone: Europe/Berlin
+ssh_key_file: ~/.ssh/id_rsa.pub
+
+configure_hostname: true

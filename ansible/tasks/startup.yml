@@ -1,2 +1,0 @@
-- name: Install startup script
-  template: src=templates/start dest=/start mode=755

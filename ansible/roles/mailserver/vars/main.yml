@@ -1,0 +1,5 @@
+vmail_user: vmail
+vmail_uid: 150
+vmail_group: mail
+vmail_gid: 8
+vmail_dir: /var/vmail

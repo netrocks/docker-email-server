@@ -1,0 +1,44 @@
+- name: Download and extract ViMbAdmin
+  shell: curl http://cloud.github.com/downloads/opensolutions/ViMbAdmin/vimbadmin-{{ vimbadmin_ver }}.tar.gz | tar -zxf - -C /usr/local
+         creates=/usr/local/vimbadmin-{{ vimbadmin_ver }}
+
+- name: Link ViMbAdmin version
+  file: dest=/usr/local/vimbadmin
+        state=link src=/usr/local/vimbadmin-{{ vimbadmin_ver }}
+
+- name: Install ViMbAdmin dependencies
+  command: ./bin/library-init.sh
+           chdir=/usr/local/vimbadmin creates=/usr/local/vimbadmin/library/Zend
+
+- name: Initialize ViMbAdmin configuration
+  command: cp application.ini.dist application.ini
+           chdir=/usr/local/vimbadmin/application/configs
+           creates=/usr/local/vimbadmin/application/configs/application.ini
+
+- name: Configure ViMbAdmin security salt
+  lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
+              regexp='^.*(securitysalt).*$' backrefs=yes
+              line="\1 = \"{{ vimbadmin_salt }}\""
+              state=present
+
+- name: Configure ViMbAdmin database
+  lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
+              regexp='^.*(resources.doctrine.connection_string).*$' backrefs=yes
+              line="\1 = \"{{ db_backend }}:///{{ vmail_dir }}/authdb.sqlite\""
+              state=present
+
+- name: Work around ViMbAdmin broken URL generation
+  lineinfile: dest=/usr/local/vimbadmin/library/ViMbAdmin/Smarty/functions/function.genUrl.php
+              regexp='URL work around' insertafter=getTemplateVars
+              line="        $url = ''; // URL work around"
+              state=present
+
+- name: Ensure ViMbAdmin can write to its working directory
+  file: dest=/usr/local/vimbadmin/var owner=www-data recurse=yes state=directory
+
+- name: Set permissions on ViMbAdmin database directory
+  file: name={{ vmail_dir }}
+        owner={{ vmail_user }} group={{ vmail_group }} mode=770 state=directory
+
+- name: Configure nginx for ViMbAdmin
+  template: src=nginx-vimbadmin dest=/etc/nginx/sites-enabled/vimbadmin

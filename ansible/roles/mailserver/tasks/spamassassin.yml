@@ -1,0 +1,8 @@
+- name: Enable spamassassin startup
+  lineinfile: dest=/etc/default/spamassassin regexp='ENABLED=*'
+              line='ENABLED=1' state=present
+
+- name: Fix logger issue with rsyslog
+  lineinfile: dest=/etc/default/spamassassin regexp='OPTIONS=*'
+              line='OPTIONS="--create-prefs --max-children 5 --helper-home-dir --syslog-socket=native"' state=present
+
