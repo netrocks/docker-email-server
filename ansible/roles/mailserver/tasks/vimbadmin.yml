@@ -24,7 +24,13 @@
 - name: Configure ViMbAdmin database
   lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
               regexp='^.*(resources.doctrine.connection_string).*$' backrefs=yes
-              line="\1 = \"{{ db_backend }}:///{{ vmail_dir }}/authdb.sqlite\""
+              line="\1 = \"{{ db_backend }}://{{ db_user }}:{{ db_pass}}@{{ db_host }}/{{db_name}}\""
+              state=present
+
+- name: Configure SMTP Host
+  lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
+              regexp='^.*(resources.mailer.smtphost).*$' backrefs=yes
+              line="\1 = \"{{ smtphost }}\""
               state=present
 
 - name: Work around ViMbAdmin broken URL generation

@@ -1,12 +1,12 @@
-- name: Install dovecot configuration files
-  copy: src=dovecot/{{ item }} dest=/etc/dovecot/conf.d
-  with_items:
-    - auth-mysql.conf.ext
-
 - name: Install dovecot configuration templates
   template: src=dovecot/{{ item }} dest=/etc/dovecot/conf.d
   with_items:
     - 11-master.conf
+
+- name: Install dovecot configuration templates
+  template: src=dovecot/{{ item }} dest=/etc/dovecot
+  with_items:
+    - dovecot-mysql.conf.ext
 
 - name: Set dovecot driver for MySQL auth to mysql
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='driver\s*='
@@ -20,13 +20,13 @@
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='default_pass_scheme\s*='
               line='default_pass_scheme = PLAIN-MD5' state=present
 
-- name: Configure dovecot MySQL queries
-  template: src=dovecot/dovecot-mysql.conf.ext
-            dest=/etc/dovecot/dovecot-mysql.conf.ext
-
-- name: Wire in configuration for dovecot MySQL queries
+- name: Wire in configuration for dovecot MySQL queries (1/2)
   lineinfile: dest=/etc/dovecot/dovecot-sql.conf.ext regexp='dovecot-mysql'
               line='!include dovecot-mysql.conf.ext' state=present
+
+- name: Configure dovecot auth mechanism (2/2)
+  lineinfile: dest=/etc/dovecot/conf.d/10-auth.conf regexp='auth-sql.conf.ext'
+              line='!include auth-sql.conf.ext' state=present
 
 - name: Disable dovecot plain text auth
   lineinfile: dest=/etc/dovecot/conf.d/10-auth.conf regexp='disable_plaintext_auth\s*='

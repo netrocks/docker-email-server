@@ -23,7 +23,6 @@
     - libpython2.7-stdlib
     - libtokyocabinet9
     - logrotate
-    - mutt
     - mysql-client
     - nginx
     - openssh-server
@@ -31,6 +30,7 @@
     - php5-fpm
     - php5-mysql
     - postfix
+    - postfix-mysql
     - postgrey
     - procmail
     - pwgen

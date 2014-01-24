@@ -13,3 +13,6 @@
     - mysql-virtual-mailbox-limit-maps.cf
     - mysql-virtual-domains-maps.cf
     - mysql-virtual-mailbox-maps.cf
+
+- name: Set mailname
+  template: src=mailname dest=/etc/mailname

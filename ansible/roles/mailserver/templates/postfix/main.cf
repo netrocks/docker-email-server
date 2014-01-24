@@ -38,8 +38,6 @@ smtpd_tls_loglevel = 1
 smtpd_tls_received_header = yes
 smtpd_tls_session_cache_timeout = 3600s
 tls_random_source = dev:/dev/urandom
-#smtpd_tls_session_cache_database = btree:{{ data_directory }}/smtpd_scache
-#smtp_tls_session_cache_database = btree:{{ data_directory }}/smtp_scache
 
 # Note that forcing use of TLS is going to cause breakage - most mail servers
 # don't offer it and so delivery will fail, both incoming and outgoing. This is

@@ -1,8 +1,8 @@
 # Dockerfile for an email server with postfix and dovecot served by mysql
-#
+# forked from Nicolas Cadou <ncadou@cadou.ca>
 
 FROM dsissitka/ubunturaring
-MAINTAINER Nicolas Cadou <ncadou@cadou.ca>
+MAINTAINER Simon Herkenhoff <s.herkenhoff@netrocks.info>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -17,14 +17,23 @@ RUN apt-get install -y --no-install-recommends \
     && apt-get clean \
     && pip install ansible
 
+# Create the MySQL scheme via startup script?
+ENV CREATE_MYSQL_SCHEME 0
+
+# Generates a random password via startup script
 ENV RANDOMIZE_PASSWORD 1
+
+# hostname used as hostname and mailname
 ENV HOSTNAME mail.localhost
+
+# password salt for ViMbAdmin
+ENV VIMBADMIN_SALT 123
+
 ENV VMAIL_USER vmail
 ENV VMAIL_UID 150
 ENV VMAIL_GROUP mail
 ENV VMAIL_GID 8
 ENV VMAIL_DIR /var/vmail
-ENV VIMBADMIN_SALT 123
 ENV VIMBADMIN_VER 2.2.2
 
 # Upstart doesn't work inside a docker container, so we deactivate it to work
@@ -33,13 +42,13 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
     && ln -s /bin/true /sbin/initctl
 
 # Install and setup the mail server
-RUN bash -c 'debconf-set-selections <<< "postfix postfix/mailname string $MAILNAME"'
+RUN bash -c 'debconf-set-selections <<< "postfix postfix/mailname string $HOSTNAME"'
 RUN apt-get install -y --no-install-recommends \
         amavis bcrypt bsd-mailx clamav clamav-daemon curl dovecot-core \
         dovecot-imapd dovecot-managesieved dovecot-pop3d dovecot-sieve \
         dovecot-mysql git libgpgme11 libpth20 libpython-stdlib \
         libpython2.7-minimal libpython2.7-stdlib libtokyocabinet9 logrotate \
-        nginx openssh-server php5-cli php5-fpm php5-mysql postfix postgrey \
+        nginx openssh-server php5-cli php5-fpm php5-mysql postfix-mysql postgrey \
         procmail pwgen python python-minimal python2.7 python2.7-minimal rsyslog \
         spamassassin ssl-cert subversion \
     && apt-get clean

@@ -1,20 +1,23 @@
 #!/usr/bin/env sh
 
 if [ "_$RANDOMIZE_PASSWORD" = "_1" ]; then
-    ROOT_PASSWORD=`pwgen -c -n -1 12`
-    echo Password: $ROOT_PASSWORD
-    echo "root:$ROOT_PASSWORD" | chpasswd
+	ROOT_PASSWORD=`pwgen -c -n -1 12`
+	IP_ADDR=`hostname -i`
+	echo "IP-Address: $IP_ADDR"
+	echo Password: $ROOT_PASSWORD
+	echo "root:$ROOT_PASSWORD" | chpasswd
+	unset $ROOT_PASSWORD
 fi
 
 if [ ! -f /var/lib/clamav/main.cvd ]; then
-    chown clamav:clamav /var/lib/clamav
-    chmod 770 /var/lib/clamav
+	chown clamav:clamav /var/lib/clamav
+	chmod 770 /var/lib/clamav
 fi
 
 if [ ! -d /var/log/clamav ]; then
-    mkdir /var/log/clamav
-    chown clamav:clamav /var/log/clamav
-    chmod 770 /var/log/clamav
+	mkdir /var/log/clamav
+	chown clamav:clamav /var/log/clamav
+	chmod 770 /var/log/clamav
 fi
 
 {% if configure_hostname is defined %}
@@ -41,6 +44,11 @@ service spamassassin start
 # Start web services.
 service php5-fpm start
 service nginx start
+
+# Create MySQL scheme if requested
+if [ "$CREATE_MYSQL_SCHEME" = "1" ]; then
+	/usr/local/vimbadmin/bin/doctrine-cli.php create-tables
+fi
 
 # Start sshd. The container will stay alive as long as the daemon runs.
 # The SSH upstart script that we can't use under docker would have created
