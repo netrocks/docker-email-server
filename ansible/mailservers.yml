@@ -1,5 +1,0 @@
----
-- hosts: mailservers
-  roles:
-    - common
-    - mailserver

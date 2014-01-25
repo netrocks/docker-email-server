@@ -3,4 +3,4 @@ db_host: xxx
 db_name: xxx
 db_user: xxx
 db_pass: xxx
-smtphost: smtp.localhost
+domain: localhost

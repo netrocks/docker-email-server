@@ -21,16 +21,28 @@
               line="\1 = \"{{ vimbadmin_salt }}\""
               state=present
 
-- name: Configure ViMbAdmin database
+- name: Configure ViMbAdmin database connection
   lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
               regexp='^.*(resources.doctrine.connection_string).*$' backrefs=yes
               line="\1 = \"{{ db_backend }}://{{ db_user }}:{{ db_pass}}@{{ db_host }}/{{db_name}}\""
               state=present
 
+- name: Configure ViMbAdmin admin name
+  lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
+              regexp='^.*(server.email.name).*$' backrefs=yes
+              line="\1 = \"Postmaster\""
+              state=present
+
+- name: Configure ViMbAdmin admin mail
+  lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
+              regexp='^.*(server.email.address).*$' backrefs=yes
+              line="\1 = \"postmaster@{{ domain }}\""
+              state=present
+
 - name: Configure SMTP Host
   lineinfile: dest=/usr/local/vimbadmin/application/configs/application.ini
               regexp='^.*(resources.mailer.smtphost).*$' backrefs=yes
-              line="\1 = \"{{ smtphost }}\""
+              line="\1 = \"localhost\""
               state=present
 
 - name: Work around ViMbAdmin broken URL generation

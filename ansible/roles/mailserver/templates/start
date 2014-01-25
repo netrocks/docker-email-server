@@ -20,9 +20,12 @@ if [ ! -d /var/log/clamav ]; then
 	chmod 770 /var/log/clamav
 fi
 
-{% if configure_hostname is defined %}
-echo "127.0.0.1 $(hostname) $(hostname -s)" >> /etc/hosts
-{% endif %}
+if [ -d "$VMAIL_DIR" ]; then
+	chown -R $VMAIL_USER:$VMAIL_GROUP $VMAIL_DIR
+	chmod 770 $VMAIL_DIR
+	find $VMAIL_DIR -type d -exec chmod 770 {} \;
+	find $VMAIL_DIR -type f -exec chmod 660 {} \;
+fi
 
 # Start system services.
 . /etc/default/rsyslog

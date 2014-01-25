@@ -8,11 +8,11 @@
   with_items:
     - main.cf
     - master.cf
-    - mysql-sender-login-maps.cf
-    - mysql-virtual-alias-maps.cf
-    - mysql-virtual-mailbox-limit-maps.cf
-    - mysql-virtual-domains-maps.cf
-    - mysql-virtual-mailbox-maps.cf
+    - mysql_sender_login_maps.cf
+    - mysql_virtual_alias_maps.cf
+    - mysql_virtual_mailbox_limit_maps.cf
+    - mysql_virtual_domains_maps.cf
+    - mysql_virtual_mailbox_maps.cf
 
 - name: Set mailname
   template: src=mailname dest=/etc/mailname

@@ -19,7 +19,7 @@ broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain =
 smtpd_sasl_authenticated_header = yes
-smtpd_sender_login_maps = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}-sender-login-maps.cf
+smtpd_sender_login_maps = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}_sender_login_maps.cf
 
 # TLS parameters
 # ---------------------------------
@@ -98,20 +98,25 @@ smtpd_helo_restrictions = permit_mynetworks,
     warn_if_reject reject_non_fqdn_hostname,
     reject_invalid_hostname,
     permit
+
 # Requirements for the sender details
-smtpd_sender_restrictions = permit_sasl_authenticated,
+smtpd_sender_restrictions =
+    permit_sasl_authenticated,
     permit_mynetworks,
     warn_if_reject reject_non_fqdn_sender,
     reject_unknown_sender_domain,
     reject_unauth_pipelining,
     permit
+
 # Requirements for the connecting server
-smtpd_client_restrictions = reject_rbl_client sbl.spamhaus.org,
-    reject_rbl_client blackholes.easynet.nl,
-    reject_rbl_client dnsbl.njabl.org
+smtpd_client_restrictions =
+    reject_rbl_client zen.spamhaus.org,
+    permit
+
 # Requirement for the recipient address. Note that the entry for
 # "check_policy_service inet:127.0.0.1:10023" enables Postgrey.
-smtpd_recipient_restrictions = reject_unauth_pipelining,
+smtpd_recipient_restrictions =
+    reject_unauth_pipelining,
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_non_fqdn_recipient,
@@ -119,10 +124,15 @@ smtpd_recipient_restrictions = reject_unauth_pipelining,
     reject_unauth_destination,
     check_policy_service inet:127.0.0.1:10023,
     permit
-smtpd_data_restrictions = reject_unauth_pipelining
+
+smtpd_data_restrictions =
+    reject_unauth_pipelining,
+    permit
+
 # This is a new option as of Postfix 2.10, and is required in addition to
 # smtpd_recipient_restrictions for things to work properly in this setup.
-smtpd_relay_restrictions = reject_unauth_pipelining,
+smtpd_relay_restrictions =
+    reject_unauth_pipelining,
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_non_fqdn_recipient,
@@ -133,6 +143,7 @@ smtpd_relay_restrictions = reject_unauth_pipelining,
 
 # require proper helo at connections
 smtpd_helo_required = yes
+
 # waste spammers time before rejecting them
 smtpd_delay_reject = yes
 disable_vrfy_command = yes
@@ -156,9 +167,9 @@ inet_interfaces = all
 mynetworks_style = host
 
 virtual_mailbox_base    = {{ vmail_dir }}
-virtual_mailbox_maps    = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}-virtual-mailbox-maps.cf
-virtual_alias_maps      = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}-virtual-alias-maps.cf
-virtual_mailbox_domains = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}-virtual-domains-maps.cf
+virtual_mailbox_maps    = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}_virtual_mailbox_maps.cf
+virtual_alias_maps      = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}_virtual_alias_maps.cf
+virtual_mailbox_domains = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}_virtual_domains_maps.cf
 virtual_mailbox_limit   = proxy:{{ db_backend }}:/etc/postfix/{{ db_backend }}_virtual_mailbox_limit_maps.cf
 virtual_uid_maps        = static:{{ vmail_uid }}
 virtual_gid_maps        = static:{{ vmail_gid }}

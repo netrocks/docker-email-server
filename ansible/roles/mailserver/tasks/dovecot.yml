@@ -63,7 +63,7 @@
     - first
     - last
 
-- name: Activate dovecot SSH/TLS support
+- name: Activate dovecot SSL/TLS support
   lineinfile: dest=/etc/dovecot/conf.d/10-ssl.conf regexp='ssl\s*='
               line='ssl = yes' state=present
 

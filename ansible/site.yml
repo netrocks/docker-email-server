@@ -1,2 +1,4 @@
 ---
-- include: mailservers.yml
+- hosts: mailservers
+  roles:
+    - mailserver

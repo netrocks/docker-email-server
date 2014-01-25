@@ -1,3 +1,4 @@
+- include: locale.yml
 - include: users.yml
 - include: dovecot.yml
 - include: packages.yml
