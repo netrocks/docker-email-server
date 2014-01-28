@@ -6,64 +6,53 @@ MAINTAINER Simon Herkenhoff <s.herkenhoff@netrocks.info>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN echo 'deb http://archive.ubuntu.com/ubuntu raring main universe' > /etc/apt/sources.list
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get clean
+# upgrade packages and install ansible
+RUN echo 'deb http://archive.ubuntu.com/ubuntu raring main universe' > /etc/apt/sources.list \
+		&& apt-get update && apt-get upgrade -y && apt-get clean \
+		&& apt-get install -y --no-install-recommends python-apt \
+		python-jinja2 python-paramiko python-pip python-yaml \
+		&& apt-get clean && pip install ansible
 
-# Install Ansible
-RUN apt-get install -y --no-install-recommends \
-        python-apt python-jinja2 python-paramiko python-pip python-yaml \
-    && apt-get clean \
-    && pip install ansible
-
-# Create the MySQL scheme via startup script?
-ENV CREATE_MYSQL_SCHEME 0
-
-# Generates a random password via startup script
+# generates a random password via startup script
 ENV RANDOMIZE_PASSWORD 1
 
 # hostname used as hostname and mailname
 ENV HOSTNAME mail.localhost
 
-# password salt for ViMbAdmin
-ENV VIMBADMIN_SALT 123
-
+# generic mail settings
 ENV VMAIL_USER vmail
 ENV VMAIL_UID 150
 ENV VMAIL_GROUP mail
 ENV VMAIL_GID 8
 ENV VMAIL_DIR /var/vmail
-ENV VIMBADMIN_VER 2.2.2
 
-# Upstart doesn't work inside a docker container, so we deactivate it to work
+# upstart doesn't work inside a docker container, so we deactivate it to work
 # around post-install scripts that want to talk to it and fail when they can't.
 RUN dpkg-divert --local --rename --add /sbin/initctl \
-    && ln -s /bin/true /sbin/initctl
+		&& ln -s /bin/true /sbin/initctl
 
-# Install and setup the mail server
+# install and setup the mail server
 RUN bash -c 'debconf-set-selections <<< "postfix postfix/mailname string $HOSTNAME"'
-RUN apt-get install -y --no-install-recommends \
-        amavis bcrypt bsd-mailx clamav clamav-daemon curl dovecot-core \
-        dovecot-imapd dovecot-managesieved dovecot-pop3d dovecot-sieve \
-        dovecot-mysql git libgpgme11 libpth20 libpython-stdlib \
-        libpython2.7-minimal libpython2.7-stdlib libtokyocabinet9 logrotate \
-        nginx openssh-server php5-cli php5-fpm php5-mysql postfix-mysql postgrey \
-        procmail pwgen python python-minimal python2.7 python2.7-minimal rsyslog \
-        spamassassin ssl-cert subversion \
-    && apt-get clean
+RUN apt-get install -y --no-install-recommends amavis bcrypt bsd-mailx clamav \
+		clamav-daemon dovecot-core dovecot-imapd dovecot-managesieved \
+		dovecot-pop3d dovecot-sieve dovecot-mysql git rsyslog logrotate \
+		openssh-server postfix-mysql postgrey procmail spamassassin pwgen \
+		ssl-cert && apt-get clean
 
-RUN rm /var/run/postgrey.pid
+# update clamav and remove postgrey.pid
+RUN freshclam && rm /var/run/postgrey.pid
 
-RUN apt-get install -y --no-install-recommends \
-        htop less moreutils tree telnet net-tools psmisc mysql-client vim-nox \
-    && apt-get clean
-
-RUN freshclam
-
+# inject ansible files
 ADD ansible /.ansible
+
+# run ansible base setup script
 RUN /.ansible/setup-base.sh
 
-EXPOSE 22 25 80 110 143 465 993 995
+# expose ports used for mail and ssh
+EXPOSE 22 25 110 143 465 993 995
+
+# this let's us use a permanent mail directory
 VOLUME ["/var/vmail"]
+
+# set start command
 CMD ["/start"]

@@ -14,5 +14,10 @@
     - mysql_virtual_domains_maps.cf
     - mysql_virtual_mailbox_maps.cf
 
+- name: Adding additional entries to mynetworks
+  lineinfile: dest=/etc/postfix/main.cf regexp='^(mynetworks\ =\ .*)$'
+              line='\1 {{ item }}' backrefs=yes state=present
+  with_items: postfix_add_mynetworks
+
 - name: Set mailname
   template: src=mailname dest=/etc/mailname

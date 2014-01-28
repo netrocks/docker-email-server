@@ -3,4 +3,6 @@ db_host: xxx
 db_name: xxx
 db_user: xxx
 db_pass: xxx
-domain: localhost
+postfix_add_mynetworks:
+  - 127.0.0.2/32
+  - 127.0.0.3/32

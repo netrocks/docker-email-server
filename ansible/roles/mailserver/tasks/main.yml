@@ -1,9 +1,6 @@
 - include: locale.yml
 - include: users.yml
 - include: dovecot.yml
-- include: packages.yml
 - include: postfix.yml
 - include: spamassassin.yml
-- include: nginx.yml
-- include: vimbadmin.yml
 - include: startup.yml
